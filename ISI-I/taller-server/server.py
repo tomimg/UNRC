@@ -80,13 +80,11 @@ def app(environ, start_response):
             else:
                 status, headers, response = status404()
             
-
         case _:
             status, headers, response = status405()
 
     start_response(status, headers)
     return [response]
-
 
 def status204():
     return "204 No Content", [("Content-Type", "text/plain")], b"204: no content"
