@@ -52,6 +52,7 @@ def app(environ, start_response):
 
         # Caso 3: Request PATCH
         case "PATCH":
+            #Obtenemos el id de la tarea y verificamos si existe en nuestra lista de tareas.
             id = int(path[1])
             if id in tasks:
                 # Leemos el tamaño de la entrada.
@@ -63,6 +64,19 @@ def app(environ, start_response):
                 tasks[id].update(updated_task)
 
                 response = json.dumps(tasks[id]).encode("utf-8")
+            # Si no está, devolvemos 404.
+            else:
+                status, headers, response = status404()
+
+        # Caso 4: Request DELETE
+        case "DELETE":
+            #Obtenemos el id de la tarea y verificamos si existe en nuestra lista de tareas.
+            id = int(path[1])
+            if id in tasks:
+                # Si existe, la eliminamos.
+                del tasks[id]
+                status, headers, response = status204()
+            # Si no está, devolvemos 404.
             else:
                 status, headers, response = status404()
             
@@ -73,6 +87,9 @@ def app(environ, start_response):
     start_response(status, headers)
     return [response]
 
+
+def status204():
+    return "204 No Content", [("Content-Type", "text/plain")], b"204: no content"
 
 def status404():
     return "404 Not Found", [("Content-Type", "text/plain")], b"404: not found"
