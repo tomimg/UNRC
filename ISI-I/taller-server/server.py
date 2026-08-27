@@ -50,6 +50,23 @@ def app(environ, start_response):
             status = "201 Created"
             response = json.dumps(new_task).encode("utf-8")
 
+        # Caso 3: Request PATCH
+        case "PATCH":
+            id = int(path[1])
+            if id in tasks:
+                # Leemos el tamaño de la entrada.
+                content_length = int(environ.get("CONTENT_LENGTH"))
+                
+                # Leemos la entrada y actualizamos la tarea.
+                input = environ["wsgi.input"].read(content_length)
+                updated_task = json.loads(input)
+                tasks[id].update(updated_task)
+
+                response = json.dumps(tasks[id]).encode("utf-8")
+            else:
+                status, headers, response = status404()
+            
+
         case _:
             status, headers, response = status405()
 
